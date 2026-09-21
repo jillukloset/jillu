@@ -1,0 +1,372 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pg_trgm]
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  RESERVED
+  SOLD
+  ARCHIVED
+}
+
+enum Condition {
+  NEW_WITH_TAGS
+  NEW_WITHOUT_TAGS
+  LIKE_NEW
+  EXCELLENT
+  GOOD
+  VISIBLE_WEAR
+}
+
+enum Gender {
+  WOMEN
+  MEN
+  UNISEX
+}
+
+enum ReportTargetType {
+  LISTING
+  USER
+}
+
+enum ReportReason {
+  SPAM
+  COUNTERFEIT
+  PROHIBITED_ITEM
+  MISLEADING
+  SCAM
+  INAPPROPRIATE_CONTENT
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationType {
+  NEW_MESSAGE
+  NEW_FOLLOWER
+  LISTING_LIKED
+  LISTING_SAVED
+  LISTING_MARKED_SOLD
+}
+
+// ---------- Identity ----------
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  emailVerified DateTime?
+  phone         String?
+  passwordHash  String?
+  role          Role       @default(USER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  profile Profile?
+
+  listings      Listing[]
+  likes         Like[]
+  saves         Save[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  following Follow[] @relation("Follower")
+  followers Follow[] @relation("Following")
+
+  conversationsAsBuyer  Conversation[] @relation("ConversationBuyer")
+  conversationsAsSeller Conversation[] @relation("ConversationSeller")
+  messages              Message[]
+
+  blocksInitiated Block[] @relation("Blocker")
+  blocksReceived  Block[] @relation("Blocked")
+
+  reportsFiled    Report[] @relation("Reporter")
+  reportsReceived Report[] @relation("ReportedUser")
+
+  verificationTokens  VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  username    String   @unique
+  displayName String
+  bio         String?
+  location    String?
+  avatarUrl   String?
+  avatarKey   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([username])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ---------- Taxonomy ----------
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  isActive Boolean   @default(true)
+  listings Listing[]
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  isActive Boolean   @default(true)
+  listings Listing[]
+}
+
+model Vibe {
+  id       String        @id @default(cuid())
+  name     String        @unique
+  slug     String        @unique
+  isActive Boolean       @default(true)
+  listings ListingVibe[]
+}
+
+model ListingVibe {
+  listingId String
+  vibeId    String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  vibe      Vibe    @relation(fields: [vibeId], references: [id], onDelete: Cascade)
+
+  @@id([listingId, vibeId])
+}
+
+// ---------- Listings ----------
+
+model Listing {
+  id          String        @id @default(cuid())
+  sellerId    String
+  seller      User          @relation(fields: [sellerId], references: [id])
+  title       String
+  description String
+  price       Int
+  currency    String        @default("INR")
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id])
+  brandId     String?
+  brand       Brand?        @relation(fields: [brandId], references: [id])
+  size        String
+  condition   Condition
+  gender      Gender
+  color       String?
+  location    String
+  status      ListingStatus @default(DRAFT)
+  viewCount   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  publishedAt DateTime?
+  soldAt      DateTime?
+
+  images        ListingImage[]
+  vibes         ListingVibe[]
+  likes         Like[]
+  saves         Save[]
+  conversations Conversation[]
+  reports       Report[]
+
+  @@index([status, createdAt])
+  @@index([status, price])
+  @@index([categoryId])
+  @@index([sellerId])
+  @@index([title(ops: raw("gin_trgm_ops"))], type: Gin)
+}
+
+model ListingImage {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  objectKey String
+  url       String
+  width     Int?
+  height    Int?
+  order     Int
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+}
+
+// ---------- Social ----------
+
+model Like {
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, listingId])
+  @@index([listingId])
+}
+
+model Save {
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, listingId])
+  @@index([listingId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+}
+
+// ---------- Messaging ----------
+
+model Conversation {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  buyerId   String
+  buyer     User     @relation("ConversationBuyer", fields: [buyerId], references: [id])
+  sellerId  String
+  seller    User     @relation("ConversationSeller", fields: [sellerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@unique([listingId, buyerId, sellerId])
+  @@index([buyerId, updatedAt])
+  @@index([sellerId, updatedAt])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  body           String
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+}
+
+// ---------- Trust & safety ----------
+
+model Report {
+  id           String           @id @default(cuid())
+  reporterId   String
+  reporter     User             @relation("Reporter", fields: [reporterId], references: [id])
+  targetType   ReportTargetType
+  listingId    String?
+  listing      Listing?         @relation(fields: [listingId], references: [id])
+  targetUserId String?
+  targetUser   User?            @relation("ReportedUser", fields: [targetUserId], references: [id])
+  reason       ReportReason
+  details      String?
+  status       ReportStatus     @default(OPEN)
+  adminNote    String?
+  createdAt    DateTime         @default(now())
+  reviewedAt   DateTime?
+
+  @@index([status, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  action     String
+  targetType String
+  targetId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
+
+// ---------- Notifications ----------
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, createdAt])
+}

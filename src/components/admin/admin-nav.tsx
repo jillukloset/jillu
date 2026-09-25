@@ -7,7 +7,10 @@ import clsx from 'clsx';
 type NavLink = { href: string; label: string; exact?: boolean; adminOnly?: boolean };
 
 const LINKS: NavLink[] = [
-  { href: '/admin', label: 'Dashboard', exact: true },
+  { href: '/admin', label: 'Overview', exact: true },
+  { href: '/admin/analytics/marketplace-health', label: 'Marketplace Health', adminOnly: true },
+  { href: '/admin/analytics/users', label: 'User Analytics', adminOnly: true },
+  { href: '/admin/analytics/listings', label: 'Listing Analytics', adminOnly: true },
   { href: '/admin/users', label: 'Users' },
   { href: '/admin/listings', label: 'Listings' },
   { href: '/admin/reports', label: 'Reports' },

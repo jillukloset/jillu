@@ -111,6 +111,8 @@ model User {
 
   verificationTokens  VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+
+  @@index([createdAt])
 }
 
 model Profile {
@@ -224,6 +226,7 @@ model Listing {
   @@index([status, price])
   @@index([categoryId])
   @@index([sellerId])
+  @@index([createdAt])
   @@index([title(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
@@ -296,6 +299,7 @@ model Conversation {
   @@unique([listingId, buyerId, sellerId])
   @@index([buyerId, updatedAt])
   @@index([sellerId, updatedAt])
+  @@index([createdAt])
 }
 
 model Message {

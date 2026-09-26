@@ -25,7 +25,9 @@ describe('no User relation ever serializes passwordHash', () => {
   const cleanupIds: string[] = [];
 
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('findListingById (public listing detail) does not include the seller passwordHash', async () => {

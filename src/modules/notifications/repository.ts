@@ -40,6 +40,7 @@ export function findUnreadMessageNotification(userId: string, conversationId: st
       readAt: null,
       payload: { path: ['conversationId'], equals: conversationId },
     },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
   });
 }
 

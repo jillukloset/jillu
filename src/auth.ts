@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { db } from '@/lib/db';
 import { AppError } from '@/lib/api-result';
+import { validateProductionEnv } from '@/lib/env';
 import { hitRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { verifyCredentials } from '@/modules/auth/service';
 import { generateUniqueUsername } from '@/modules/auth/username';
@@ -12,6 +13,8 @@ import {
   InvalidCredentialsError,
   RateLimitedError,
 } from '@/modules/auth/auth-errors';
+
+validateProductionEnv();
 
 const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 

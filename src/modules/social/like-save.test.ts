@@ -8,7 +8,9 @@ describe('like-service / save-service', () => {
   const cleanupIds: string[] = [];
 
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('prevents duplicate likes on the same listing', async () => {

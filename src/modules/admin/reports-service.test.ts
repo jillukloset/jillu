@@ -14,7 +14,9 @@ describe('admin reports service', () => {
   const cleanupIds: string[] = [];
 
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('moves a report to REVIEWING', async () => {

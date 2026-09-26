@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { db } from '@/lib/db';
 import { createTestUser, createTestListing, cleanupTestUser } from '@/test-utils/factories';
 import { resolveDateRange } from './date-range';
@@ -11,8 +11,11 @@ import { getOverviewMetrics } from './overview-service';
 describe('analytics services (against real seeded data)', () => {
   const cleanupIds: string[] = [];
 
-  afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+  afterEach(async () => {
+    const ids = cleanupIds.splice(0);
+    for (const id of ids) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('counts a user as active and returning only when they engaged and predate the window', async () => {

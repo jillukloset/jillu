@@ -7,7 +7,9 @@ describe('block-service', () => {
   const cleanupIds: string[] = [];
 
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('prevents a user from blocking themselves', async () => {

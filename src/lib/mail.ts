@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import { validateProductionEnv } from '@/lib/env';
+
+validateProductionEnv();
 
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -10,6 +13,10 @@ const transport = nodemailer.createTransport({
 });
 
 export async function sendMail(opts: { to: string; subject: string; html: string; text: string }) {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
+
   await transport.sendMail({
     from: process.env.SMTP_FROM ?? 'Jillu Kloset <noreply@jillukloset.com>',
     to: opts.to,

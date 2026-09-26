@@ -6,7 +6,9 @@ describe('listings ownership', () => {
   const cleanupIds: string[] = [];
 
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('rejects a non-owner trying to update a listing', async () => {

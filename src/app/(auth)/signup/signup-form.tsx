@@ -48,13 +48,7 @@ export function SignupForm() {
         <p className="text-sm text-muted">
           We sent a verification link to confirm your account. Open it to activate your closet.
         </p>
-        <p className="text-xs text-muted">
-          Running locally? View the email at{' '}
-          <a href="http://localhost:8025" className="underline">
-            localhost:8025
-          </a>
-          .
-        </p>
+        <p className="text-xs text-muted">Verification email sent. Please check your inbox.</p>
       </div>
     );
   }

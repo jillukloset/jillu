@@ -1,4 +1,5 @@
 import { AppError } from '@/lib/api-result';
+import { getAppUrl } from '@/lib/env';
 import { passwordResetEmail, sendMail, verificationEmail } from '@/lib/mail';
 import type { ForgotPasswordInput, ResetPasswordInput, SignupInput } from './schemas';
 import { hashPassword, verifyPassword } from './password';
@@ -16,7 +17,7 @@ import {
   createVerificationToken,
 } from './tokens';
 
-const appUrl = () => process.env.APP_URL ?? 'http://localhost:3000';
+const appUrl = () => getAppUrl();
 
 export async function signup(input: SignupInput) {
   const existingEmail = await findUserByEmail(input.email);

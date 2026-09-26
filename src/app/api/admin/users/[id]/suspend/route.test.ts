@@ -22,7 +22,9 @@ function makeRequest(id: string) {
 describe('POST /api/admin/users/[id]/suspend (route-level)', () => {
   const cleanupIds: string[] = [];
   afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+    for (const id of cleanupIds) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('returns 401 when unauthenticated', async () => {

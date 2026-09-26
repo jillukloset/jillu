@@ -6,6 +6,22 @@ function objectStorageOrigin() {
   }
 }
 
+function storageRemotePatterns() {
+  try {
+    const url = new URL(process.env.S3_PUBLIC_URL ?? '');
+    return [
+      {
+        protocol: url.protocol.replace(':', ''),
+        hostname: url.hostname,
+        ...(url.port ? { port: url.port } : {}),
+        pathname: '/**',
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
 function buildCsp() {
   const storageOrigin = objectStorageOrigin();
 
@@ -51,6 +67,7 @@ const securityHeaders = [
 const nextConfig = {
   images: {
     remotePatterns: [
+      ...storageRemotePatterns(),
       {
         protocol: 'http',
         hostname: 'localhost',

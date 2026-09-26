@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { createTestUser, createTestListing, cleanupTestUser } from '@/test-utils/factories';
 import { db } from '@/lib/db';
 import { likeListing } from '@/modules/social/like-service';
@@ -10,8 +10,11 @@ import { listNotifications } from './repository';
 describe('notifications service', () => {
   const cleanupIds: string[] = [];
 
-  afterAll(async () => {
-    await Promise.all(cleanupIds.map(cleanupTestUser));
+  afterEach(async () => {
+    const ids = cleanupIds.splice(0);
+    for (const id of ids) {
+      await cleanupTestUser(id);
+    }
   });
 
   it('creates exactly one notification when a listing is liked', async () => {

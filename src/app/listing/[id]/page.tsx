@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { auth } from '@/auth';
+import { getAppUrl } from '@/lib/env';
 import { findListingById, incrementViewCount } from '@/modules/listings/repository';
 import { getClosetStats, isFollowing } from '@/modules/profile/repository';
 import { findLike, countLikes } from '@/modules/social/like-repository';
@@ -50,7 +51,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     session?.user ? findSave(session.user.id, listing.id) : Promise.resolve(null),
   ]);
 
-  const listingUrl = `${process.env.APP_URL ?? 'http://localhost:3000'}/listing/${listing.id}`;
+  const listingUrl = `${getAppUrl()}/listing/${listing.id}`;
 
   return (
     <div className="mx-auto max-w-5xl px-gutter py-8">

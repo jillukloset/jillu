@@ -31,54 +31,66 @@ export function readEnv(name: string) {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
-function validateHttpsUrl(name: string) {
+function httpsUrlProblem(name: string) {
   const value = readEnv(name);
-  if (!value) return;
+  if (!value) return undefined;
 
   let url: URL;
   try {
     url = new URL(value);
   } catch {
-    throw new Error(`${name} is not a valid URL.`);
+    return `${name} is not a valid URL.`;
   }
-  if (url.protocol !== 'https:') {
-    throw new Error(`${name} must use https:// in production.`);
-  }
+  return url.protocol === 'https:' ? undefined : `${name} must use https:// in production.`;
 }
 
-function hostWithoutWww(name: string) {
-  return new URL(readEnv(name)!).hostname.replace(/^www\./, '');
+function hostWithoutWww(value: string) {
+  return new URL(value).hostname.replace(/^www\./, '');
 }
 
 export function validateProductionEnv() {
   if (!isProduction()) return;
 
-  for (const key of REQUIRED_PRODUCTION_ENV) {
-    if (!readEnv(key)) {
-      throw new Error(`Missing required production environment variable: ${key}`);
+  const problems: string[] = [];
+
+  const missing = REQUIRED_PRODUCTION_ENV.filter((key) => !readEnv(key));
+  if (missing.length > 0) {
+    problems.push(`Missing required production environment variables: ${missing.join(', ')}`);
+  }
+
+  for (const name of ['AUTH_URL', 'APP_URL', 'S3_ENDPOINT', 'S3_PUBLIC_URL']) {
+    const problem = httpsUrlProblem(name);
+    if (problem) problems.push(problem);
+  }
+
+  const publicUrl = readEnv('S3_PUBLIC_URL');
+  const appUrl = readEnv('APP_URL');
+  if (publicUrl && appUrl && !httpsUrlProblem('S3_PUBLIC_URL') && !httpsUrlProblem('APP_URL')) {
+    if (hostWithoutWww(publicUrl) === hostWithoutWww(appUrl)) {
+      problems.push('S3_PUBLIC_URL must point at the object-storage public host, not the application domain.');
     }
   }
 
-  validateHttpsUrl('AUTH_URL');
-  validateHttpsUrl('APP_URL');
-  validateHttpsUrl('S3_ENDPOINT');
-  validateHttpsUrl('S3_PUBLIC_URL');
-
-  if (hostWithoutWww('S3_PUBLIC_URL') === hostWithoutWww('APP_URL')) {
-    throw new Error('S3_PUBLIC_URL must point at the object-storage public host, not the application domain.');
+  const forcePathStyle = readEnv('S3_FORCE_PATH_STYLE');
+  if (forcePathStyle && forcePathStyle !== 'true' && forcePathStyle !== 'false') {
+    problems.push('S3_FORCE_PATH_STYLE must be set to "true" or "false" in production.');
   }
 
-  if (readEnv('S3_FORCE_PATH_STYLE') !== 'true' && readEnv('S3_FORCE_PATH_STYLE') !== 'false') {
-    throw new Error('S3_FORCE_PATH_STYLE must be set to "true" or "false" in production.');
+  const smtpPort = readEnv('SMTP_PORT');
+  if (smtpPort) {
+    const port = Number(smtpPort);
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      problems.push('SMTP_PORT must be a valid TCP port in production.');
+    }
   }
 
-  const port = Number(readEnv('SMTP_PORT'));
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error('SMTP_PORT must be a valid TCP port in production.');
+  const smtpSecure = readEnv('SMTP_SECURE');
+  if (smtpSecure && smtpSecure !== 'true' && smtpSecure !== 'false') {
+    problems.push('SMTP_SECURE must be set to "true" or "false" in production.');
   }
 
-  if (readEnv('SMTP_SECURE') !== 'true' && readEnv('SMTP_SECURE') !== 'false') {
-    throw new Error('SMTP_SECURE must be set to "true" or "false" in production.');
+  if (problems.length > 0) {
+    throw new Error(`Invalid production environment:\n - ${problems.join('\n - ')}`);
   }
 }
 

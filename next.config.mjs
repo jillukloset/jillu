@@ -22,8 +22,21 @@ function storageRemotePatterns() {
   }
 }
 
+// Origin the browser PUTs presigned uploads to: virtual-hosted style is <bucket>.<endpoint-host>,
+// path style is the endpoint host itself.
+function uploadOrigin() {
+  try {
+    const endpoint = new URL(process.env.S3_ENDPOINT ?? '');
+    if (process.env.S3_FORCE_PATH_STYLE === 'true' || !process.env.S3_BUCKET) return endpoint.origin;
+    return `${endpoint.protocol}//${process.env.S3_BUCKET}.${endpoint.host}`;
+  } catch {
+    return null;
+  }
+}
+
 function buildCsp() {
   const storageOrigin = objectStorageOrigin();
+  const connectOrigins = [...new Set([storageOrigin, uploadOrigin()].filter(Boolean))].join(' ');
 
   // Notes on intentional exceptions:
   // - script-src/style-src need 'unsafe-inline': Next.js's App Router injects inline <script>
@@ -38,9 +51,9 @@ function buildCsp() {
     `default-src 'self'`,
     `script-src 'self' 'unsafe-inline'`,
     `style-src 'self' 'unsafe-inline'`,
-    `img-src 'self' data: blob: ${storageOrigin} https://picsum.photos https://*.r2.dev`,
+    `img-src 'self' data: blob: ${storageOrigin} https://picsum.photos`,
     `font-src 'self' data:`,
-    `connect-src 'self' ${storageOrigin}`,
+    `connect-src 'self' ${connectOrigins}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,

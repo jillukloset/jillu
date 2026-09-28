@@ -1,34 +1,29 @@
 import type { Metadata } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
-import { Providers } from '@/components/providers';
-import { SiteHeader } from '@/components/nav/site-header';
+import { StoreProvider } from '@/context/store-context';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { SearchModal } from '@/components/ui/SearchModal';
+import { QuickViewModal } from '@/components/products/QuickViewModal';
+import { ToastContainer } from '@/components/ui/Toast';
 import './globals.css';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-display',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
-  title: 'Jillu Kloset — Pre-loved. Re-loved.',
-  description: 'Discover pre-loved fashion, sell from your own closet, and give clothes another story.',
+  title: 'JILLU KLOSET — WEAR YOUR STORY',
+  description: 'Premium luxury fashion for the ones who choose confidence over trends. Discover curated streetwear, fine tailoring, archival denim, and artisanal footwear.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body className="min-h-screen pb-16 md:pb-0">
-        <Providers>
-          <SiteHeader />
-          <main>{children}</main>
-        </Providers>
+    <html lang="en">
+      <body className="min-h-screen bg-[#080807] text-[#F4EFE7] flex flex-col font-sans selection:bg-[#C5A880] selection:text-[#080807]">
+        <StoreProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <SearchModal />
+          <QuickViewModal />
+          <ToastContainer />
+        </StoreProvider>
       </body>
     </html>
   );

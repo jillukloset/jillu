@@ -193,6 +193,26 @@ model ListingVibe {
   @@id([listingId, vibeId])
 }
 
+// Singleton row (id is always "main") holding the homepage hero configuration,
+// editable from the admin panel.
+model HeroConfig {
+  id                  String   @id @default("main")
+  isActive            Boolean  @default(true)
+  eyebrow             String   @default("A closet for every story")
+  title               String   @default("PRE-LOVED. RE-LOVED.")
+  subtitle            String   @default("Discover pieces with another story.")
+  backgroundUrl       String?
+  backgroundObjectKey String?
+  backgroundColor     String   @default("#3B2230")
+  overlayOpacity      Int      @default(35)
+  textAlign           String   @default("left")
+  primaryCtaLabel     String   @default("EXPLORE")
+  primaryCtaHref      String   @default("/explore")
+  secondaryCtaLabel   String   @default("SELL SOMETHING")
+  secondaryCtaHref    String   @default("/sell")
+  updatedAt           DateTime @updatedAt
+}
+
 // ---------- Listings ----------
 
 model Listing {

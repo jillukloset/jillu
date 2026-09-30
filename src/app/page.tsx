@@ -1,42 +1,24 @@
-import Link from 'next/link';
-import { buttonClassName } from '@/components/ui/button';
 import { HomeSection } from '@/components/home-section';
 import { ProductRow } from '@/components/product-row';
+import { Hero } from '@/components/hero';
 import { VibeGrid } from '@/components/vibe-grid';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getNewDrops, getTrending } from '@/modules/discovery/repository';
 import { toListingCard } from '@/modules/listings/mappers';
 import { listVibes } from '@/modules/taxonomy/repository';
+import { getHeroConfig } from '@/modules/admin/hero-service';
 
 export default async function HomePage() {
-  const [newDrops, trending, vibes] = await Promise.all([getNewDrops(8), getTrending(8), listVibes()]);
+  const [newDrops, trending, vibes, heroConfig] = await Promise.all([
+    getNewDrops(8),
+    getTrending(8),
+    listVibes(),
+    getHeroConfig(),
+  ]);
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-plum px-gutter py-20 text-paper sm:py-28">
-        <div className="mx-auto flex max-w-5xl flex-col items-start gap-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-paper/70">
-            A closet for every story
-          </p>
-          <h1 className="font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">
-            PRE-LOVED.
-            <br />
-            RE-LOVED.
-          </h1>
-          <p className="max-w-md text-lg text-paper/80">Discover pieces with another story.</p>
-          <div className="mt-2 flex flex-wrap gap-3">
-            <Link href="/explore" className={buttonClassName('primary', 'lg', 'bg-accent text-accent-ink')}>
-              EXPLORE
-            </Link>
-            <Link
-              href="/sell"
-              className={buttonClassName('secondary', 'lg', 'border-paper text-paper hover:bg-paper hover:text-plum')}
-            >
-              SELL SOMETHING
-            </Link>
-          </div>
-        </div>
-      </section>
+      <Hero config={heroConfig} />
 
       <HomeSection title="New drops" seeAllHref="/explore?sort=newest">
         {newDrops.length > 0 ? (

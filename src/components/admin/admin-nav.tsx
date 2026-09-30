@@ -17,6 +17,7 @@ const LINKS: NavLink[] = [
   { href: '/admin/categories', label: 'Categories', adminOnly: true },
   { href: '/admin/brands', label: 'Brands', adminOnly: true },
   { href: '/admin/vibes', label: 'Vibes', adminOnly: true },
+  { href: '/admin/hero', label: 'Homepage hero', adminOnly: true },
   { href: '/admin/audit', label: 'Audit log', adminOnly: true },
 ];
 

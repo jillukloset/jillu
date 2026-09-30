@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Price } from '@/components/ui/price';
@@ -9,9 +10,11 @@ import type { ListingCardData } from '@/modules/listings/types';
 export function SavedGrid({ listings }: { listings: ListingCardData[] }) {
   const [items, setItems] = useState(listings);
   const [pending, startTransition] = useTransition();
+  const queryClient = useQueryClient();
 
   const unsave = (id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
+    queryClient.invalidateQueries({ queryKey: ['saved-count'] });
     startTransition(async () => {
       await fetch(`/api/listings/${id}/save`, { method: 'DELETE' });
     });

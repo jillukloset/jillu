@@ -58,6 +58,7 @@ export function MessagesShell({
   // Opening a chat marks it read, so refresh the list (unread dots) whenever the route changes.
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ['conversations-list'] });
+    queryClient.invalidateQueries({ queryKey: ['unread-message-count'] });
   }, [pathname, queryClient]);
 
   const rows = useMemo(() => {

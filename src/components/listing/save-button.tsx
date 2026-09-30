@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTransientError } from '@/hooks/use-transient-error';
 
@@ -15,6 +16,7 @@ export function SaveButton({
   isLoggedIn: boolean;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [saved, setSaved] = useState(initialSaved);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useTransientError();
@@ -35,6 +37,7 @@ export function SaveButton({
         setError("Couldn't update. Try again.");
         return;
       }
+      queryClient.invalidateQueries({ queryKey: ['saved-count'] });
       router.refresh();
     });
   };

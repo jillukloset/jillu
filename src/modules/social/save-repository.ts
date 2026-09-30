@@ -16,6 +16,10 @@ export function countSaves(listingId: string) {
   return db.save.count({ where: { listingId } });
 }
 
+export function countSavedListings(userId: string) {
+  return db.save.count({ where: { userId } });
+}
+
 export function listSavedListings(userId: string, cursor?: string, take = 24) {
   return db.save.findMany({
     where: { userId },

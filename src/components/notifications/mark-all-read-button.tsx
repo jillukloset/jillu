@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function MarkAllReadButton() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -16,6 +18,7 @@ export function MarkAllReadButton() {
         setError("Couldn't mark all as read. Try again.");
         return;
       }
+      queryClient.invalidateQueries({ queryKey: ['unread-notification-count'] });
       router.refresh();
     });
   };

@@ -28,7 +28,7 @@ export function NotificationBell({ className }: { className?: string }) {
         <img src="/notification-bell.svg" alt="" width={28} height={28} />
         {count > 0 ? (
           <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-pill bg-accent px-1 text-[10px] font-bold leading-none text-accent-ink">
-            {count > 9 ? '9+' : count}
+            {count > 99 ? '99+' : count}
           </span>
         ) : null}
       </span>

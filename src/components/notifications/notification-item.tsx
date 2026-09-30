@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { formatRelativeTime } from '@/lib/format-time';
 
@@ -18,9 +19,11 @@ export function NotificationItem({
   createdAt: Date | string;
 }) {
   const isUnread = !readAt;
+  const queryClient = useQueryClient();
 
   const markRead = () => {
     if (!isUnread) return;
+    queryClient.invalidateQueries({ queryKey: ['unread-notification-count'] });
     // Fire-and-forget: don't block navigation on this.
     fetch(`/api/notifications/${id}/read`, { method: 'POST' }).catch(() => undefined);
   };

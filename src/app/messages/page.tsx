@@ -18,7 +18,7 @@ export default async function MessagesPage({
   if (!session?.user) redirect('/login?callbackUrl=/messages');
 
   const { cursor } = await searchParams;
-  const { items, hasMore } = await listMyConversations(session.user.id, cursor);
+  const { items, hasMore, nextCursor } = await listMyConversations(session.user.id, cursor);
   const rows = items.map((item) => toConversationListItem(item, session.user.id));
 
   return (
@@ -42,9 +42,12 @@ export default async function MessagesPage({
         </div>
       )}
 
-      {hasMore && rows.at(-1) ? (
+      {hasMore && nextCursor ? (
         <div className="px-gutter py-6 text-center">
-          <Link href={`/messages?cursor=${rows.at(-1)!.id}`} className="text-sm font-semibold text-ink underline">
+          <Link
+            href={`/messages?cursor=${encodeURIComponent(nextCursor)}`}
+            className="text-sm font-semibold text-ink underline"
+          >
             Load more
           </Link>
         </div>

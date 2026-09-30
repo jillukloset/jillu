@@ -1,57 +1,16 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
-import { listMyConversations } from '@/modules/messaging/service';
-import { toConversationListItem } from '@/modules/messaging/mappers';
-import { ConversationListItem } from '@/components/messaging/conversation-list-item';
-import { EmptyState } from '@/components/ui/empty-state';
+import { MessageIcon } from '@/components/icons';
 
 export const metadata: Metadata = { title: 'Messages — Jillu Kloset' };
 
-export default async function MessagesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ cursor?: string }>;
-}) {
-  const session = await auth();
-  if (!session?.user) redirect('/login?callbackUrl=/messages');
-
-  const { cursor } = await searchParams;
-  const { items, hasMore, nextCursor } = await listMyConversations(session.user.id, cursor);
-  const rows = items.map((item) => toConversationListItem(item, session.user.id));
-
+export default function MessagesPage() {
   return (
-    <div className="mx-auto max-w-2xl">
-      <h1 className="px-gutter pb-2 pt-8 font-display text-3xl">Messages</h1>
-
-      {rows.length === 0 ? (
-        <div className="px-gutter py-6">
-          <EmptyState
-            title="No conversations yet"
-            description="Find something you love and start the conversation."
-            actionLabel="Explore"
-            actionHref="/explore"
-          />
-        </div>
-      ) : (
-        <div>
-          {rows.map((row) => (
-            <ConversationListItem key={row.id} {...row} />
-          ))}
-        </div>
-      )}
-
-      {hasMore && nextCursor ? (
-        <div className="px-gutter py-6 text-center">
-          <Link
-            href={`/messages?cursor=${encodeURIComponent(nextCursor)}`}
-            className="text-sm font-semibold text-ink underline"
-          >
-            Load more
-          </Link>
-        </div>
-      ) : null}
+    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+      <span className="flex h-24 w-24 items-center justify-center rounded-full border border-border text-muted">
+        <MessageIcon width={40} height={40} strokeWidth={1.2} />
+      </span>
+      <p className="font-display text-2xl text-ink">Your messages</p>
+      <p className="text-sm text-muted">Select a chat to start messaging.</p>
     </div>
   );
 }

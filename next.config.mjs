@@ -49,7 +49,8 @@ function buildCsp() {
   //   directly to it via presigned URLs, and every listing/avatar image is served from it.
   const directives = [
     `default-src 'self'`,
-    `script-src 'self' 'unsafe-inline'`,
+    // Dev only: React Refresh / webpack HMR evaluate strings at runtime.
+    `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"}`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: blob: ${storageOrigin} https://picsum.photos`,
     `font-src 'self' data:`,

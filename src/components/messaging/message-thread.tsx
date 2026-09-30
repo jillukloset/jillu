@@ -19,14 +19,14 @@ export function MessageThread({ messages, viewerId }: { messages: ThreadMessage[
   }, [messages.length]);
 
   return (
-    <div className="flex min-h-[40vh] flex-col gap-2 px-gutter py-4">
+    <div className="flex min-h-[40vh] min-w-0 flex-col gap-2 px-gutter py-4">
       {messages.map((message) => {
         const mine = message.senderId === viewerId;
         return (
           <div key={message.id} className={clsx('flex flex-col', mine ? 'items-end' : 'items-start')}>
             <div
               className={clsx(
-                'max-w-[75%] rounded-lg px-4 py-2.5 text-sm',
+                'max-w-[75%] whitespace-pre-wrap break-words [overflow-wrap:anywhere] rounded-lg px-4 py-2.5 text-sm',
                 mine ? 'bg-ink text-paper' : 'bg-surface text-ink',
               )}
             >

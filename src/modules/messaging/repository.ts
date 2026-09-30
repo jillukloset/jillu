@@ -1,4 +1,6 @@
+import type { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
+import type { TimeIdCursor } from './cursors';
 
 const listingSummaryInclude = {
   images: { orderBy: { order: 'asc' as const }, take: 1 },
@@ -16,6 +18,33 @@ const participantSelect = {
 
 export const CONVERSATIONS_PAGE_SIZE = 20;
 export const MESSAGES_PAGE_SIZE = 30;
+
+function afterCreatedAt(cursor: TimeIdCursor): Prisma.MessageWhereInput {
+  return {
+    OR: [
+      { createdAt: { gt: cursor.at } },
+      { AND: [{ createdAt: cursor.at }, { id: { gt: cursor.id } }] },
+    ],
+  };
+}
+
+function beforeCreatedAt(cursor: TimeIdCursor): Prisma.MessageWhereInput {
+  return {
+    OR: [
+      { createdAt: { lt: cursor.at } },
+      { AND: [{ createdAt: cursor.at }, { id: { lt: cursor.id } }] },
+    ],
+  };
+}
+
+function beforeUpdatedAt(cursor: TimeIdCursor): Prisma.ConversationWhereInput {
+  return {
+    OR: [
+      { updatedAt: { lt: cursor.at } },
+      { AND: [{ updatedAt: cursor.at }, { id: { lt: cursor.id } }] },
+    ],
+  };
+}
 
 export function findConversation(listingId: string, buyerId: string, sellerId: string) {
   return db.conversation.findUnique({
@@ -38,12 +67,16 @@ export function findConversationById(id: string) {
   });
 }
 
-export function listConversationsForUser(userId: string, cursor?: string, take = CONVERSATIONS_PAGE_SIZE) {
+export function listConversationsForUser(userId: string, cursor?: TimeIdCursor, take = CONVERSATIONS_PAGE_SIZE) {
   return db.conversation.findMany({
-    where: { OR: [{ buyerId: userId }, { sellerId: userId }] },
+    where: {
+      AND: [
+        { OR: [{ buyerId: userId }, { sellerId: userId }] },
+        ...(cursor ? [beforeUpdatedAt(cursor)] : []),
+      ],
+    },
     orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     take: take + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     include: {
       listing: { include: listingSummaryInclude },
       buyer: participantSelect,
@@ -53,22 +86,22 @@ export function listConversationsForUser(userId: string, cursor?: string, take =
   });
 }
 
-export function listMessages(conversationId: string, cursor?: string, take = MESSAGES_PAGE_SIZE) {
+export function listMessages(conversationId: string, cursor?: TimeIdCursor, take = MESSAGES_PAGE_SIZE) {
   return db.message.findMany({
-    where: { conversationId },
+    where: {
+      AND: [{ conversationId }, ...(cursor ? [beforeCreatedAt(cursor)] : [])],
+    },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take: take + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   });
 }
 
-export function listMessagesSince(conversationId: string, sinceId?: string) {
-  if (!sinceId) {
-    return db.message.findMany({ where: { conversationId }, orderBy: { createdAt: 'asc' } });
-  }
+export function listMessagesSince(conversationId: string, cursor: TimeIdCursor) {
   return db.message.findMany({
-    where: { conversationId, id: { gt: sinceId } },
-    orderBy: { createdAt: 'asc' },
+    where: {
+      AND: [{ conversationId }, afterCreatedAt(cursor)],
+    },
+    orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
   });
 }
 

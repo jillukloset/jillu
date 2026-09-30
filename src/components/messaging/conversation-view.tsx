@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@/components/icons';
 import { Price } from '@/components/ui/price';
 import { ReportDialog } from '@/components/reports/report-dialog';
+import { mergeThreadMessages } from '@/modules/messaging/thread-merge';
 import { MessageThread, type ThreadMessage } from './message-thread';
 import { MessageComposer } from './message-composer';
 
@@ -22,7 +23,10 @@ export function ConversationView({
   otherUser,
   listing,
   initialMessages,
+  initialSinceCursor,
+  initialOlderCursor,
   canMessage,
+  listingMessageable,
   iBlockedThem,
 }: {
   conversationId: string;
@@ -30,33 +34,59 @@ export function ConversationView({
   otherUser: OtherUser;
   listing: ListingSummary;
   initialMessages: ThreadMessage[];
+  initialSinceCursor: string;
+  initialOlderCursor: string | null;
   canMessage: boolean;
+  listingMessageable: boolean;
   iBlockedThem: boolean;
 }) {
   const router = useRouter();
   const [messages, setMessages] = useState<ThreadMessage[]>(initialMessages);
   const [blocked, setBlocked] = useState(iBlockedThem);
-  const [messagingAllowed, setMessagingAllowed] = useState(canMessage);
   const [blockPending, setBlockPending] = useState(false);
-  const lastIdRef = useRef(initialMessages.at(-1)?.id);
+  const [olderCursor, setOlderCursor] = useState(initialOlderCursor);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const sinceCursorRef = useRef(initialSinceCursor);
+
+  const messagingAllowed = canMessage && listingMessageable;
 
   useQuery({
     queryKey: ['conversation-poll', conversationId],
     queryFn: async () => {
       const res = await fetch(
-        `/api/conversations/${conversationId}/messages?since=${lastIdRef.current ?? ''}`,
+        `/api/conversations/${conversationId}/messages?since=${encodeURIComponent(sinceCursorRef.current)}`,
       );
       if (!res.ok) return null;
       const json = await res.json();
       const items: ThreadMessage[] = json.data?.items ?? [];
+      const nextCursor: string | undefined = json.data?.sinceCursor;
       if (items.length > 0) {
-        lastIdRef.current = items.at(-1)!.id;
-        setMessages((prev) => [...prev, ...items]);
+        setMessages((prev) => mergeThreadMessages(prev, items));
       }
+      // Only move the cursor forward once the server has confirmed it, so a failed or
+      // malformed response can never cause a message to be skipped on the next poll.
+      if (nextCursor) sinceCursorRef.current = nextCursor;
       return items;
     },
     refetchInterval: POLL_INTERVAL_MS,
   });
+
+  const loadOlderMessages = useCallback(async () => {
+    if (!olderCursor || loadingOlder) return;
+    setLoadingOlder(true);
+    try {
+      const res = await fetch(
+        `/api/conversations/${conversationId}/messages?cursor=${encodeURIComponent(olderCursor)}`,
+      );
+      if (!res.ok) return;
+      const json = await res.json();
+      const items: ThreadMessage[] = json.data?.items ?? [];
+      setMessages((prev) => mergeThreadMessages(prev, items));
+      setOlderCursor(json.data?.olderCursor ?? null);
+    } finally {
+      setLoadingOlder(false);
+    }
+  }, [conversationId, olderCursor, loadingOlder]);
 
   const sendMessage = useCallback(
     async (body: string) => {
@@ -68,8 +98,10 @@ export function ConversationView({
       if (!res.ok) return false;
       const json = await res.json();
       const message: ThreadMessage = json.data;
-      lastIdRef.current = message.id;
-      setMessages((prev) => [...prev, message]);
+      // Don't advance sinceCursorRef here — it's a server-issued opaque cursor and this
+      // response doesn't carry one. The next poll will fetch this message again by id and
+      // it'll simply be deduped by mergeThreadMessages, so nothing is lost or duplicated.
+      setMessages((prev) => mergeThreadMessages(prev, [message]));
       return true;
     },
     [conversationId],
@@ -80,11 +112,15 @@ export function ConversationView({
     const res = await fetch(`/api/users/${otherUser.id}/block`, { method: blocked ? 'DELETE' : 'POST' });
     setBlockPending(false);
     if (!res.ok) return;
-    const next = !blocked;
-    setBlocked(next);
-    setMessagingAllowed(!next);
+    setBlocked(!blocked);
     router.refresh();
   };
+
+  const disabledReason = blocked
+    ? "You've blocked this user. Unblock them to keep messaging."
+    : !listingMessageable
+      ? 'Messaging is unavailable for this listing.'
+      : 'Messaging is unavailable in this conversation.';
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col pb-24 md:pb-6">
@@ -136,17 +172,22 @@ export function ConversationView({
         <span className="shrink-0 text-xs font-semibold text-ink underline">View listing</span>
       </Link>
 
+      {olderCursor ? (
+        <div className="px-gutter py-3 text-center">
+          <button
+            type="button"
+            onClick={loadOlderMessages}
+            disabled={loadingOlder}
+            className="text-xs font-semibold text-ink underline disabled:opacity-50"
+          >
+            {loadingOlder ? 'Loading…' : 'Load older messages'}
+          </button>
+        </div>
+      ) : null}
+
       <MessageThread messages={messages} viewerId={viewerId} />
 
-      <MessageComposer
-        disabled={!messagingAllowed}
-        disabledReason={
-          blocked
-            ? "You've blocked this user. Unblock them to keep messaging."
-            : 'Messaging is unavailable in this conversation.'
-        }
-        onSend={sendMessage}
-      />
+      <MessageComposer disabled={!messagingAllowed} disabledReason={disabledReason} onSend={sendMessage} />
     </div>
   );
 }

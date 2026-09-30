@@ -5,6 +5,7 @@ import { AppError } from '@/lib/api-result';
 import { getConversationDetail, getConversationMessages } from '@/modules/messaging/service';
 import { findBlock, isBlockedEitherWay } from '@/modules/social/block-repository';
 import { ConversationView } from '@/components/messaging/conversation-view';
+import { isListingMessageable } from '@/modules/messaging/messageable';
 
 export const metadata: Metadata = { title: 'Conversation — Jillu Kloset' };
 
@@ -31,11 +32,13 @@ export default async function ConversationPage({
   const otherUser = isViewerBuyer ? conversation.seller : conversation.buyer;
   const otherProfile = otherUser.profile;
 
-  const [{ items: messages }, blockedEitherWay, iBlockedThem] = await Promise.all([
+  const [{ items: messages, olderCursor, sinceCursor }, blockedEitherWay, iBlockedThem] = await Promise.all([
     getConversationMessages(conversationId, viewerId),
     isBlockedEitherWay(viewerId, otherUser.id),
     findBlock(viewerId, otherUser.id),
   ]);
+
+  const listingMessageable = isListingMessageable(conversation.listing.status);
 
   return (
     <ConversationView
@@ -55,7 +58,10 @@ export default async function ConversationPage({
         primaryImageUrl: conversation.listing.images[0]?.url ?? null,
       }}
       initialMessages={messages}
+      initialSinceCursor={sinceCursor}
+      initialOlderCursor={olderCursor}
       canMessage={!blockedEitherWay}
+      listingMessageable={listingMessageable}
       iBlockedThem={Boolean(iBlockedThem)}
     />
   );

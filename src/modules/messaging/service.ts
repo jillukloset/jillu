@@ -3,6 +3,13 @@ import { db } from '@/lib/db';
 import { isBlockedEitherWay } from '@/modules/social/block-repository';
 import { notifyNewMessage } from '@/modules/notifications/service';
 import {
+  decodeTimeIdCursor,
+  encodeMessagePollOrigin,
+  encodeTimeIdCursor,
+  type TimeIdCursor,
+} from './cursors';
+import { isListingMessageable } from './messageable';
+import {
   CONVERSATIONS_PAGE_SIZE,
   MESSAGES_PAGE_SIZE,
   countUnreadForConversations,
@@ -16,6 +23,24 @@ import {
   markMessagesRead,
 } from './repository';
 
+function requireTimeIdCursor(raw: string, label: string): TimeIdCursor {
+  const cursor = decodeTimeIdCursor(raw);
+  if (!cursor) {
+    throw new AppError('INVALID_CURSOR', `Invalid ${label} cursor.`, 400);
+  }
+  return cursor;
+}
+
+function assertListingMessageable(status: string) {
+  if (!isListingMessageable(status)) {
+    throw new AppError(
+      'LISTING_NOT_MESSAGEABLE',
+      'This listing is not available to message.',
+      403,
+    );
+  }
+}
+
 export async function startOrGetConversation(currentUserId: string, listingId: string) {
   const listing = await db.listing.findUnique({
     where: { id: listingId },
@@ -24,6 +49,8 @@ export async function startOrGetConversation(currentUserId: string, listingId: s
   if (!listing) {
     throw new AppError('LISTING_NOT_FOUND', 'Listing not found.', 404);
   }
+
+  assertListingMessageable(listing.status);
 
   const sellerId = listing.sellerId;
   const buyerId = currentUserId;
@@ -66,21 +93,42 @@ export async function getConversationMessages(conversationId: string, userId: st
     await markMessagesRead(conversationId, userId);
   }
 
-  const rows = await listMessages(conversationId, cursor);
+  const decoded = cursor ? requireTimeIdCursor(cursor, 'message') : undefined;
+  const rows = await listMessages(conversationId, decoded);
   const hasMore = rows.length > MESSAGES_PAGE_SIZE;
   const items = rows.slice(0, MESSAGES_PAGE_SIZE).reverse();
+  const oldest = items[0];
+  const newest = items.at(-1);
 
-  return { items, hasMore };
+  return {
+    items,
+    hasMore,
+    olderCursor: hasMore && oldest ? encodeTimeIdCursor(oldest.createdAt, oldest.id) : null,
+    sinceCursor: newest
+      ? encodeTimeIdCursor(newest.createdAt, newest.id)
+      : encodeMessagePollOrigin(),
+  };
 }
 
-export async function getNewMessagesSince(conversationId: string, userId: string, sinceId?: string) {
+export async function getNewMessagesSince(conversationId: string, userId: string, since: string) {
   await requireParticipant(conversationId, userId);
+  if (!since) {
+    throw new AppError('INVALID_CURSOR', 'A since cursor is required to poll for new messages.', 400);
+  }
+  const cursor = requireTimeIdCursor(since, 'since');
   await markMessagesRead(conversationId, userId);
-  return listMessagesSince(conversationId, sinceId);
+  const items = await listMessagesSince(conversationId, cursor);
+  const newest = items.at(-1);
+  return {
+    items,
+    sinceCursor: newest ? encodeTimeIdCursor(newest.createdAt, newest.id) : since,
+  };
 }
 
 export async function sendMessage(conversationId: string, senderId: string, body: string) {
   const conversation = await requireParticipant(conversationId, senderId);
+  assertListingMessageable(conversation.listing.status);
+
   const recipientId = conversation.buyerId === senderId ? conversation.sellerId : conversation.buyerId;
 
   const blocked = await isBlockedEitherWay(senderId, recipientId);
@@ -109,10 +157,15 @@ export async function markConversationRead(conversationId: string, userId: strin
   await markMessagesRead(conversationId, userId);
 }
 
-export async function listMyConversations(userId: string, cursor?: string) {
-  const rows = await listConversationsForUser(userId, cursor);
-  const hasMore = rows.length > CONVERSATIONS_PAGE_SIZE;
-  const page = rows.slice(0, CONVERSATIONS_PAGE_SIZE);
+export async function listMyConversations(
+  userId: string,
+  cursor?: string,
+  take = CONVERSATIONS_PAGE_SIZE,
+) {
+  const decoded = cursor ? requireTimeIdCursor(cursor, 'inbox') : undefined;
+  const rows = await listConversationsForUser(userId, decoded, take);
+  const hasMore = rows.length > take;
+  const page = rows.slice(0, take);
 
   // One batched query for all conversations' unread counts, instead of one query per row.
   const unreadCounts = await countUnreadForConversations(page.map((c) => c.id), userId);
@@ -121,5 +174,10 @@ export async function listMyConversations(userId: string, cursor?: string) {
     unreadCount: unreadCounts.get(conversation.id) ?? 0,
   }));
 
-  return { items: withUnread, hasMore };
+  const last = page.at(-1);
+  return {
+    items: withUnread,
+    hasMore,
+    nextCursor: hasMore && last ? encodeTimeIdCursor(last.updatedAt, last.id) : null,
+  };
 }

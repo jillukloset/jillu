@@ -16,6 +16,7 @@ import { ReportDialog } from '@/components/reports/report-dialog';
 import { ConditionBadge } from '@/components/condition-badge';
 import { VibeTag } from '@/components/vibe-tag';
 import { Price } from '@/components/ui/price';
+import { isListingMessageable } from '@/modules/messaging/messageable';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -109,7 +110,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
           <p className="text-xs text-muted">{listing.location}</p>
 
-          {!isOwner ? (
+          {!isOwner && isListingMessageable(listing.status) ? (
             <MessageSellerButton listingId={listing.id} isLoggedIn={Boolean(session?.user)} />
           ) : null}
 

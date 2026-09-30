@@ -173,11 +173,15 @@ model Brand {
 }
 
 model Vibe {
-  id       String        @id @default(cuid())
-  name     String        @unique
-  slug     String        @unique
-  isActive Boolean       @default(true)
-  listings ListingVibe[]
+  id               String        @id @default(cuid())
+  name             String        @unique
+  slug             String        @unique
+  isActive         Boolean       @default(true)
+  bannerUrl        String?
+  bannerObjectKey  String?
+  description      String?
+  accentColor      String?
+  listings         ListingVibe[]
 }
 
 model ListingVibe {

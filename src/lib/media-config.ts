@@ -2,6 +2,7 @@ export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as 
 
 export const MAX_AVATAR_BYTES = 5 * 1024 * 1024; // 5MB
 export const MAX_LISTING_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
+export const MAX_VIBE_BANNER_BYTES = 5 * 1024 * 1024; // 5MB
 
 export const MIN_LISTING_IMAGES = 4;
 export const MAX_LISTING_IMAGES = 8;

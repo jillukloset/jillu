@@ -123,10 +123,10 @@ export function ConversationView({
       : 'Messaging is unavailable in this conversation.';
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col pb-24 md:pb-6">
-      <header className="flex items-center justify-between gap-3 border-b border-border bg-paper px-gutter py-3">
+    <div className="flex h-full flex-col">
+      <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-paper px-gutter py-3">
         <div className="flex items-center gap-3">
-          <Link href="/messages" aria-label="Back to messages" className="-m-3 p-3 text-ink">
+          <Link href="/messages" aria-label="Back to messages" className="-m-3 p-3 text-ink md:hidden">
             <ArrowLeftIcon width={20} height={20} />
           </Link>
           <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-plum">
@@ -158,7 +158,7 @@ export function ConversationView({
 
       <Link
         href={`/listing/${listing.id}`}
-        className="flex items-center gap-3 border-b border-border bg-surface px-gutter py-3"
+        className="flex shrink-0 items-center gap-3 border-b border-border bg-surface px-gutter py-3"
       >
         <div className="relative h-12 w-10 shrink-0 overflow-hidden rounded-md bg-paper">
           {listing.primaryImageUrl ? (
@@ -172,20 +172,22 @@ export function ConversationView({
         <span className="shrink-0 text-xs font-semibold text-ink underline">View listing</span>
       </Link>
 
-      {olderCursor ? (
-        <div className="px-gutter py-3 text-center">
-          <button
-            type="button"
-            onClick={loadOlderMessages}
-            disabled={loadingOlder}
-            className="text-xs font-semibold text-ink underline disabled:opacity-50"
-          >
-            {loadingOlder ? 'Loading…' : 'Load older messages'}
-          </button>
-        </div>
-      ) : null}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {olderCursor ? (
+          <div className="px-gutter py-3 text-center">
+            <button
+              type="button"
+              onClick={loadOlderMessages}
+              disabled={loadingOlder}
+              className="text-xs font-semibold text-ink underline disabled:opacity-50"
+            >
+              {loadingOlder ? 'Loading…' : 'Load older messages'}
+            </button>
+          </div>
+        ) : null}
 
-      <MessageThread messages={messages} viewerId={viewerId} />
+        <MessageThread messages={messages} viewerId={viewerId} />
+      </div>
 
       <MessageComposer disabled={!messagingAllowed} disabledReason={disabledReason} onSend={sendMessage} />
     </div>

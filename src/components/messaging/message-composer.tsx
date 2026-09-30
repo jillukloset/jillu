@@ -34,14 +34,14 @@ export function MessageComposer({
 
   if (disabled) {
     return (
-      <div className="sticky bottom-16 z-20 border-t border-border bg-paper px-gutter py-4 text-center text-sm text-muted md:bottom-0">
+      <div className="shrink-0 border-t border-border bg-paper px-gutter py-4 text-center text-sm text-muted">
         {disabledReason ?? 'Messaging is unavailable in this conversation.'}
       </div>
     );
   }
 
   return (
-    <div className="sticky bottom-16 z-20 border-t border-border bg-paper px-gutter py-3 md:bottom-0">
+    <div className="shrink-0 border-t border-border bg-paper px-gutter py-3">
       {error ? <p role="alert" className="mb-2 text-xs text-danger">{error}</p> : null}
       <form
         onSubmit={(e) => {

@@ -33,9 +33,8 @@ export function HeartFilledIcon(props: SVGProps<SVGSVGElement>) {
 export function MessageIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base(props)}>
-      <path d="M21 12a8 8 0 1 1-3.5-6.6" />
-      <path d="M21 4v6h-6" transform="rotate(180 15 7)" />
-      <path d="M4 20.5 6 16a8 8 0 0 1-2-5.3" />
+      <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20.5l1.6-5A8.5 8.5 0 1 1 21 11.5Z" />
+      <path d="M8.5 10.5h7M8.5 14h4.5" />
     </svg>
   );
 }

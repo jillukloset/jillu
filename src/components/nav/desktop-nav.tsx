@@ -1,16 +1,18 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { Session } from 'next-auth';
 import { SearchBar } from './search-bar';
-import { HeartIcon, MessageIcon, PlusCircleIcon } from '@/components/icons';
+import { MessageIcon, PlusCircleIcon, SavedBagIcon } from '@/components/icons';
 import { logoutAction } from '@/modules/auth/actions';
 import { NotificationBell } from '@/components/notifications/notification-bell';
 
 export function DesktopNav({ session }: { session: Session | null }) {
   return (
     <header className="sticky top-0 z-40 hidden border-b border-border bg-paper/95 backdrop-blur md:block">
-      <div className="mx-auto flex max-w-7xl items-center gap-8 px-8 py-4">
-        <Link href="/" className="font-display text-2xl tracking-tight text-ink">
-          JILLU
+      <div className="flex items-center gap-8 px-6 py-3">
+        <Link href="/" aria-label="Jillu Kloset home" className="flex shrink-0 items-center gap-3">
+          <Image src="/logo.png" alt="" width={44} height={44} priority className="h-11 w-11 rounded-full object-cover" />
+          <span className="font-display text-2xl tracking-tight text-ink">JILLU</span>
         </Link>
 
         <nav className="flex items-center gap-6 text-sm font-semibold tracking-wide">
@@ -24,13 +26,13 @@ export function DesktopNav({ session }: { session: Session | null }) {
 
         <SearchBar className="ml-4 flex-1 max-w-md" />
 
-        <div className="flex items-center gap-5">
+        <div className="ml-auto flex items-center gap-5">
           <Link
             href="/saved"
             aria-label="Saved pieces"
             className="-m-3 p-3 text-ink transition-colors hover:text-accent-text"
           >
-            <HeartIcon />
+            <SavedBagIcon width={26} height={26} />
           </Link>
           <Link
             href="/messages"

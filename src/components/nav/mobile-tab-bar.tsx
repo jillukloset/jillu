@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import type { Session } from 'next-auth';
-import { GridIcon, HeartIcon, HomeIcon, MessageIcon, PlusCircleIcon } from '@/components/icons';
+import { GridIcon, HomeIcon, MessageIcon, PlusCircleIcon, SavedBagIcon } from '@/components/icons';
 
 export function MobileTabBar({ session }: { session: Session | null }) {
   const pathname = usePathname();
@@ -19,11 +19,7 @@ export function MobileTabBar({ session }: { session: Session | null }) {
 
   const trailingTabs = [
     { href: '/messages', label: 'Messages', icon: MessageIcon },
-    {
-      href: session ? `/closet/${session.user.username}` : '/login',
-      label: session ? 'Closet' : 'Log in',
-      icon: HeartIcon,
-    },
+    { href: '/saved', label: 'Saved', icon: SavedBagIcon },
   ] as const;
 
   return (

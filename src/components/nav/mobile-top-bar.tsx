@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { Session } from 'next-auth';
 import { SearchIcon } from '@/components/icons';
@@ -6,8 +7,9 @@ import { NotificationBell } from '@/components/notifications/notification-bell';
 export function MobileTopBar({ session }: { session: Session | null }) {
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-paper/95 px-gutter py-3 backdrop-blur md:hidden">
-      <Link href="/" className="font-display text-xl tracking-tight text-ink">
-        JILLU
+      <Link href="/" aria-label="Jillu Kloset home" className="flex shrink-0 items-center gap-2">
+        <Image src="/logo.png" alt="" width={36} height={36} priority className="h-9 w-9 rounded-full object-cover" />
+        <span className="font-display text-xl tracking-tight text-ink">JILLU</span>
       </Link>
       <div className="flex items-center gap-4">
         <Link href="/search" aria-label="Search" className="-m-3 p-3 text-ink">

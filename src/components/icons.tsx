@@ -30,12 +30,10 @@ export function HeartFilledIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function MessageIcon(props: SVGProps<SVGSVGElement>) {
+export function MessageIcon({ width = 24, height = 24, className }: SVGProps<SVGSVGElement>) {
   return (
-    <svg {...base(props)}>
-      <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20.5l1.6-5A8.5 8.5 0 1 1 21 11.5Z" />
-      <path d="M8.5 10.5h7M8.5 14h4.5" />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/message-icon.png" alt="" width={Number(width)} height={Number(height)} className={className} />
   );
 }
 
@@ -134,6 +132,18 @@ export function MenuIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base(props)}>
       <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  );
+}
+
+export function SavedBagIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base({ ...props, stroke: '#1a1a1a', strokeWidth: 1.1 })}>
+      <path d="M8 8V6.5a4 4 0 0 1 8 0V8" fill="none" stroke="#1a1a1a" strokeWidth="3.4" />
+      <path d="M8 8V6.5a4 4 0 0 1 8 0V8" fill="none" stroke="#ff4fa0" strokeWidth="1.6" />
+      <path d="M4.2 8.2h15.6l1.2 12a.9.9 0 0 1-.9 1H3.9a.9.9 0 0 1-.9-1l1.2-12Z" fill="#c2185b" />
+      <path d="m12 10.5 3 2.2v6.6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6.6l3-2.2Z" fill="#ff4fa0" />
+      <path d="M12 18.2s-2-1.2-2-2.6a1.1 1.1 0 0 1 2-.6 1.1 1.1 0 0 1 2 .6c0 1.4-2 2.6-2 2.6Z" fill="#f8b6d6" strokeWidth="0.6" />
     </svg>
   );
 }

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { BellIcon } from '@/components/icons';
 
 const POLL_INTERVAL_MS = 20000;
 
@@ -25,7 +24,8 @@ export function NotificationBell({ className }: { className?: string }) {
       {/* Padding on the Link grows the tap target; this inner wrapper keeps the badge
           anchored to the icon itself instead of the Link's (now larger) padding box. */}
       <span className="relative block">
-        <BellIcon />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/notification-bell.svg" alt="" width={28} height={28} />
         {count > 0 ? (
           <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-pill bg-accent px-1 text-[10px] font-bold leading-none text-accent-ink">
             {count > 9 ? '9+' : count}

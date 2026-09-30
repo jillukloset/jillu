@@ -97,7 +97,7 @@ export function MessagesShell({
   const inChat = activeId !== null;
 
   return (
-    <div className="flex h-[calc(100dvh-7.5rem)] overflow-hidden md:h-[calc(100dvh-5.15rem)]">
+    <div className="flex h-[calc(100dvh-7.5rem)] overflow-hidden md:h-[calc(100dvh-4.4rem)]">
       <aside
         className={clsx(
           'w-full shrink-0 flex-col border-border bg-paper md:flex md:w-[360px] md:border-r',

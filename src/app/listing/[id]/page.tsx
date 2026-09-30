@@ -101,7 +101,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           {listing.vibes.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {listing.vibes.map(({ vibe }) => (
-                <VibeTag key={vibe.id} name={vibe.name} slug={vibe.slug} />
+                <VibeTag key={vibe.id} name={vibe.name} slug={vibe.slug} accentColor={vibe.accentColor} />
               ))}
             </div>
           ) : null}

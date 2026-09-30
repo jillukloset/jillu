@@ -11,3 +11,7 @@ export function listBrands() {
 export function listVibes() {
   return db.vibe.findMany({ where: { isActive: true }, orderBy: { name: 'asc' } });
 }
+
+export function findVibeBySlug(slug: string) {
+  return db.vibe.findFirst({ where: { slug, isActive: true } });
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { searchListings } from '@/modules/discovery/repository';
-import { listBrands, listCategories } from '@/modules/taxonomy/repository';
+import { listBrands, listCategories, findVibeBySlug } from '@/modules/taxonomy/repository';
 import { FilterDrawer } from '@/components/explore/filter-drawer';
 import { DiscoveryResults } from '@/components/explore/discovery-results';
 import type { SortOption } from '@/modules/discovery/types';
@@ -40,10 +40,11 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     cursor: params.cursor,
   };
 
-  const [{ items, hasMore }, categories, brands] = await Promise.all([
+  const [{ items, hasMore }, categories, brands, currentVibe] = await Promise.all([
     searchListings(filters),
     listCategories(),
     listBrands(),
+    params.vibe ? findVibeBySlug(params.vibe) : Promise.resolve(null),
   ]);
 
   const nextParams = new URLSearchParams();
@@ -55,7 +56,11 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="mx-auto max-w-6xl px-gutter py-8">
-      <h1 className="mb-6 font-display text-3xl">Explore</h1>
+      {currentVibe ? (
+        <VibeHeader vibe={currentVibe} />
+      ) : (
+        <h1 className="mb-6 font-display text-3xl">Explore</h1>
+      )}
 
       <FilterDrawer
         categories={categories}
@@ -82,6 +87,36 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         emptyTitle="No pieces match yet"
         emptyDescription="Try loosening a filter or check back soon."
       />
+    </div>
+  );
+}
+
+function VibeHeader({ vibe }: { vibe: { name: string; description: string | null; bannerUrl: string | null; accentColor: string | null } }) {
+  const hasBanner = Boolean(vibe.bannerUrl);
+  const bgColor = vibe.accentColor ?? '#4A1942';
+
+  return (
+    <div
+      className="relative mb-6 overflow-hidden rounded-2xl"
+      style={!hasBanner ? { backgroundColor: bgColor } : undefined}
+    >
+      {hasBanner ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={vibe.bannerUrl!} alt={vibe.name} className="h-48 w-full object-cover sm:h-56" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        </>
+      ) : null}
+      <div className={`${hasBanner ? 'absolute bottom-0 left-0 right-0 p-6' : 'p-6'}`}>
+        <h1 className={`font-display text-3xl ${hasBanner ? 'text-white' : 'text-paper'}`}>
+          {vibe.name}
+        </h1>
+        {vibe.description ? (
+          <p className={`mt-1 max-w-lg text-sm ${hasBanner ? 'text-white/80' : 'text-paper/80'}`}>
+            {vibe.description}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

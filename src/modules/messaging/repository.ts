@@ -136,3 +136,15 @@ export async function countUnreadForConversations(conversationIds: string[], use
   }
   return counts;
 }
+
+export function countAllUnreadMessages(userId: string) {
+  return db.message.count({
+    where: {
+      senderId: { not: userId },
+      readAt: null,
+      conversation: {
+        OR: [{ buyerId: userId }, { sellerId: userId }],
+      },
+    },
+  });
+}

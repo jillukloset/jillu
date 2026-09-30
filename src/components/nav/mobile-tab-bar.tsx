@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import type { Session } from 'next-auth';
 import { GridIcon, HomeIcon, MessageIcon, PlusCircleIcon, SavedBagIcon } from '@/components/icons';
+import { NavBadge } from '@/components/ui/nav-badge';
 
 export function MobileTabBar({ session }: { session: Session | null }) {
   const pathname = usePathname();
@@ -18,8 +19,18 @@ export function MobileTabBar({ session }: { session: Session | null }) {
   ] as const;
 
   const trailingTabs = [
-    { href: '/messages', label: 'Messages', icon: MessageIcon },
-    { href: '/saved', label: 'Saved', icon: SavedBagIcon },
+    {
+      href: '/messages',
+      label: 'Messages',
+      icon: MessageIcon,
+      badge: session ? <NavBadge queryKey="unread-message-count" apiUrl="/api/messages/unread-count" /> : null,
+    },
+    {
+      href: '/saved',
+      label: 'Saved',
+      icon: SavedBagIcon,
+      badge: session ? <NavBadge queryKey="saved-count" apiUrl="/api/saved/count" /> : null,
+    },
   ] as const;
 
   return (
@@ -51,11 +62,13 @@ function TabLink({
   label,
   icon: Icon,
   active,
+  badge,
 }: {
   href: string;
   label: string;
   icon: typeof HomeIcon;
   active: boolean;
+  badge?: React.ReactNode;
 }) {
   return (
     <Link
@@ -65,7 +78,10 @@ function TabLink({
         active ? 'text-accent-text' : 'text-muted',
       )}
     >
-      <Icon width={22} height={22} strokeWidth={active ? 2 : 1.6} />
+      <span className="relative">
+        <Icon width={22} height={22} strokeWidth={active ? 2 : 1.6} />
+        {badge}
+      </span>
       {label}
     </Link>
   );

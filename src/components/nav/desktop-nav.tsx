@@ -5,6 +5,7 @@ import { SearchBar } from './search-bar';
 import { MessageIcon, PlusCircleIcon, SavedBagIcon } from '@/components/icons';
 import { logoutAction } from '@/modules/auth/actions';
 import { NotificationBell } from '@/components/notifications/notification-bell';
+import { NavBadge } from '@/components/ui/nav-badge';
 
 export function DesktopNav({ session }: { session: Session | null }) {
   return (
@@ -32,14 +33,20 @@ export function DesktopNav({ session }: { session: Session | null }) {
             aria-label="Saved pieces"
             className="-m-3 p-3 text-ink transition-colors hover:text-accent-text"
           >
-            <SavedBagIcon width={26} height={26} />
+            <span className="relative block">
+              <SavedBagIcon width={26} height={26} />
+              {session ? <NavBadge queryKey="saved-count" apiUrl="/api/saved/count" /> : null}
+            </span>
           </Link>
           <Link
             href="/messages"
             aria-label="Messages"
             className="-m-3 p-3 text-ink transition-colors hover:text-accent-text"
           >
-            <MessageIcon />
+            <span className="relative block">
+              <MessageIcon />
+              {session ? <NavBadge queryKey="unread-message-count" apiUrl="/api/messages/unread-count" /> : null}
+            </span>
           </Link>
           {session ? <NotificationBell className="-m-3 p-3 hover:text-accent-text" /> : null}
 

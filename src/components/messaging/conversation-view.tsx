@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -41,6 +41,7 @@ export function ConversationView({
   iBlockedThem: boolean;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [messages, setMessages] = useState<ThreadMessage[]>(initialMessages);
   const [blocked, setBlocked] = useState(iBlockedThem);
   const [blockPending, setBlockPending] = useState(false);
@@ -49,6 +50,10 @@ export function ConversationView({
   const sinceCursorRef = useRef(initialSinceCursor);
 
   const messagingAllowed = canMessage && listingMessageable;
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['unread-message-count'] });
+  }, [conversationId, queryClient]);
 
   useQuery({
     queryKey: ['conversation-poll', conversationId],

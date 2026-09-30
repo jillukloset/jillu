@@ -12,6 +12,7 @@ import { isListingMessageable } from './messageable';
 import {
   CONVERSATIONS_PAGE_SIZE,
   MESSAGES_PAGE_SIZE,
+  countAllUnreadMessages,
   countUnreadForConversations,
   createConversation,
   createMessage,
@@ -155,6 +156,10 @@ export async function sendMessage(conversationId: string, senderId: string, body
 export async function markConversationRead(conversationId: string, userId: string) {
   await requireParticipant(conversationId, userId);
   await markMessagesRead(conversationId, userId);
+}
+
+export function getTotalUnreadMessageCount(userId: string) {
+  return countAllUnreadMessages(userId);
 }
 
 export async function listMyConversations(

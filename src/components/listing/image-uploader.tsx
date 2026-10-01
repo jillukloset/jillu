@@ -53,10 +53,14 @@ export function ImageUploader({
       const { uploadUrl, objectKey } = presignJson.data;
 
       const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
-      if (!putRes.ok) throw new Error('Upload failed');
+      if (!putRes.ok) throw new Error(`Upload PUT failed with status ${putRes.status}`);
 
       onChange(patch(localId, { status: 'done', objectKey }));
-    } catch {
+    } catch (err) {
+      // Keep the user-facing message generic (the real cause - CORS, network, signature,
+      // storage outage - isn't actionable for them), but never swallow it: a masked error
+      // here is exactly what made this failure mode so hard to diagnose last time.
+      console.error(`Image upload failed for ${file.name}:`, err);
       onChange(patch(localId, { status: 'error' }));
       setError(`Couldn't upload ${file.name}. Please try again.`);
     }

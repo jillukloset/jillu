@@ -21,7 +21,31 @@ import { isListingMessageable } from '@/modules/messaging/messageable';
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const listing = await findListingById(id);
-  return { title: listing ? `${listing.title} — Jillu Kloset` : 'Listing — Jillu Kloset' };
+  if (!listing) return { title: 'Listing' };
+
+  const description = listing.description.length > 160 ? `${listing.description.slice(0, 157)}...` : listing.description;
+  const image = listing.images[0]?.url;
+  const isPublic = ['ACTIVE', 'RESERVED', 'SOLD'].includes(listing.status);
+
+  return {
+    title: listing.title,
+    description,
+    alternates: { canonical: `/listing/${listing.id}` },
+    robots: { index: isPublic, follow: true },
+    openGraph: {
+      type: 'website',
+      title: listing.title,
+      description,
+      url: `/listing/${listing.id}`,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title: listing.title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
 }
 
 const STATUS_LABEL: Record<string, string> = {

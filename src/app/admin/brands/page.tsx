@@ -3,7 +3,7 @@ import { requireAdminPage } from '@/lib/require-role';
 import { listTaxonomy } from '@/modules/admin/taxonomy-service';
 import { TaxonomyManager } from '@/components/admin/taxonomy-manager';
 
-export const metadata: Metadata = { title: 'Admin · Brands — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Brands' };
 
 export default async function AdminBrandsPage({
   searchParams,

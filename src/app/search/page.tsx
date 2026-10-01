@@ -12,7 +12,13 @@ export async function generateMetadata({
   searchParams: Promise<{ q?: string }>;
 }): Promise<Metadata> {
   const { q } = await searchParams;
-  return { title: q ? `"${q}" — Jillu Kloset` : 'Search — Jillu Kloset' };
+  return {
+    title: q ? `"${q}"` : 'Search',
+    description: 'Search pre-loved fashion by title, brand, category, or vibe on Jillu Kloset.',
+    // Search-result pages are unbounded, low-value duplicates of /explore content for crawlers —
+    // keep them out of the index while still letting bots follow links from them.
+    robots: { index: false, follow: true },
+  };
 }
 
 type SearchParams = {

@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Help Center — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Help Center',
+  description: 'Answers to common questions about buying, selling, payments, and reporting on Jillu Kloset.',
+  alternates: { canonical: '/help' },
+};
 
 const FAQS = [
   {

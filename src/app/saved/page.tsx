@@ -6,7 +6,7 @@ import { toListingCard } from '@/modules/listings/mappers';
 import { SavedGrid } from '@/components/saved/saved-grid';
 import { EmptyState } from '@/components/ui/empty-state';
 
-export const metadata: Metadata = { title: 'Saved — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Saved' };
 
 export default async function SavedPage() {
   const session = await auth();

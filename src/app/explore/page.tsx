@@ -5,7 +5,13 @@ import { FilterToolbar } from '@/components/explore/filter-toolbar';
 import { DiscoveryResults } from '@/components/explore/discovery-results';
 import type { SortOption } from '@/modules/discovery/types';
 
-export const metadata: Metadata = { title: 'Explore — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Explore',
+  description: 'Browse pre-loved fashion by category, brand, size, condition, and vibe on Jillu Kloset.',
+  // Filter/sort query params produce the same core content under many URLs; canonicalizing to
+  // the clean base path avoids diluting ranking signal across those variants.
+  alternates: { canonical: '/explore' },
+};
 
 type SearchParams = {
   q?: string;

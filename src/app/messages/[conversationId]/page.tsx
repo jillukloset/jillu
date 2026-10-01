@@ -7,7 +7,7 @@ import { findBlock, isBlockedEitherWay } from '@/modules/social/block-repository
 import { ConversationView } from '@/components/messaging/conversation-view';
 import { isListingMessageable } from '@/modules/messaging/messageable';
 
-export const metadata: Metadata = { title: 'Conversation — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Conversation' };
 
 export default async function ConversationPage({
   params,

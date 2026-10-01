@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Shipping Policy — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Shipping Policy',
+  description: 'How shipping and local pickup work on Jillu Kloset — arranged directly between buyer and seller.',
+  alternates: { canonical: '/shipping-policy' },
+};
 
 export default function ShippingPolicyPage() {
   return (

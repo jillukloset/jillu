@@ -3,7 +3,7 @@ import { requireAdminPage } from '@/lib/require-role';
 import { getHeroConfig } from '@/modules/admin/hero-service';
 import { HeroManager, type HeroConfigState } from '@/components/admin/hero-manager';
 
-export const metadata: Metadata = { title: 'Admin · Homepage Hero — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Homepage Hero' };
 
 const DEFAULTS: HeroConfigState = {
   isActive: true,

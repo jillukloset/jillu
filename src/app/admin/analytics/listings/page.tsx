@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getListingAnalytics } from '@/modules/analytics/listing-analytics-service';
 import { BarList } from '@/components/admin/analytics/bar-list';
 
-export const metadata: Metadata = { title: 'Admin · Listing Analytics — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Listing Analytics' };
 
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: 'Active',

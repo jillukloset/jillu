@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Terms of Use — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Terms of Use',
+  description: 'The terms that govern your use of Jillu Kloset.',
+  alternates: { canonical: '/terms' },
+};
 
 export default function TermsPage() {
   return (

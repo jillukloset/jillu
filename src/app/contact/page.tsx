@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Contact Us — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Contact Us',
+  description: 'Get in touch with the Jillu Kloset team for support, feedback, or questions.',
+  alternates: { canonical: '/contact' },
+};
 
 export default function ContactPage() {
   return (

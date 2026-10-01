@@ -3,7 +3,7 @@ import { requireAdminPage } from '@/lib/require-role';
 import { listTaxonomy } from '@/modules/admin/taxonomy-service';
 import { TaxonomyManager } from '@/components/admin/taxonomy-manager';
 
-export const metadata: Metadata = { title: 'Admin · Categories — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Categories' };
 
 export default async function AdminCategoriesPage() {
   await requireAdminPage('/admin/categories');

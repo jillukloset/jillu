@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Returns Policy — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Returns Policy',
+  description: 'How returns work on Jillu Kloset — arranged directly between buyer and seller.',
+  alternates: { canonical: '/returns-policy' },
+};
 
 export default function ReturnsPolicyPage() {
   return (

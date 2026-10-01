@@ -4,7 +4,7 @@ import { verifyEmail } from '@/modules/auth/service';
 import { AppError } from '@/lib/api-result';
 import { buttonClassName } from '@/components/ui/button';
 
-export const metadata: Metadata = { title: 'Verify email — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Verify email' };
 
 export default async function VerifyEmailPage({
   searchParams,

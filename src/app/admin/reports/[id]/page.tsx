@@ -7,7 +7,7 @@ import { getReportForAdmin } from '@/modules/admin/reports-service';
 import { ReportActions } from '@/components/admin/report-actions';
 import { formatRelativeTime } from '@/lib/format-time';
 
-export const metadata: Metadata = { title: 'Admin · Report — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Report' };
 
 export default async function AdminReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

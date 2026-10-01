@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'How Jillu Kloset Works — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'How Jillu Kloset Works?',
+  description: 'From creating your closet to listing, discovery, and messaging a buyer or seller directly — here’s the full Jillu Kloset flow.',
+  alternates: { canonical: '/how-it-works' },
+};
 
 const STEPS = [
   {

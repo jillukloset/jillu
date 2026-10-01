@@ -4,7 +4,7 @@ import { getOverviewMetrics } from '@/modules/analytics/overview-service';
 import { getModerationSummary } from '@/modules/analytics/moderation-summary-service';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 
-export const metadata: Metadata = { title: 'Admin dashboard — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin dashboard' };
 
 export default async function AdminDashboardPage() {
   const [kpis, moderation] = await Promise.all([getOverviewMetrics(), getModerationSummary()]);

@@ -5,7 +5,7 @@ import { RangeTabs } from '@/components/admin/analytics/range-tabs';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { TrendChart } from '@/components/admin/analytics/trend-chart';
 
-export const metadata: Metadata = { title: 'Admin · User Analytics — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · User Analytics' };
 
 export default async function UserAnalyticsPage({
   searchParams,

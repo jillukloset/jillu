@@ -5,7 +5,7 @@ import { RangeTabs } from '@/components/admin/analytics/range-tabs';
 import { KpiCard } from '@/components/admin/analytics/kpi-card';
 import { TrendChart } from '@/components/admin/analytics/trend-chart';
 
-export const metadata: Metadata = { title: 'Admin · Marketplace Health — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Marketplace Health' };
 
 function formatPct(value: number | null) {
   if (value === null) return '—';

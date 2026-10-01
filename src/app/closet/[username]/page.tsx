@@ -15,7 +15,11 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  return { title: `@${username} — Jillu Kloset` };
+  return {
+    title: `@${username}`,
+    description: `Browse @${username}'s closet on Jillu Kloset — pre-loved fashion, ready for a new story.`,
+    alternates: { canonical: `/closet/${username}` },
+  };
 }
 
 export default async function ClosetPage({ params }: { params: Promise<{ username: string }> }) {

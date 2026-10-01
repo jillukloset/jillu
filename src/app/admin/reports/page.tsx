@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getReportsPage } from '@/modules/admin/reports-service';
 import { formatRelativeTime } from '@/lib/format-time';
 
-export const metadata: Metadata = { title: 'Admin · Reports — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Reports' };
 
 const STATUSES = ['OPEN', 'REVIEWING', 'RESOLVED', 'DISMISSED'];
 

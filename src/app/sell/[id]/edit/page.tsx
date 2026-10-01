@@ -6,7 +6,7 @@ import { getListingForOwner } from '@/modules/listings/service';
 import { listBrands, listCategories, listVibes } from '@/modules/taxonomy/repository';
 import { SellWizard } from '../../sell-wizard';
 
-export const metadata: Metadata = { title: 'Edit listing — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Edit listing' };
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

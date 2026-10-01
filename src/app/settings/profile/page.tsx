@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 import { AvatarUploader } from '@/components/closet/avatar-uploader';
 import { ProfileForm } from './profile-form';
 
-export const metadata: Metadata = { title: 'Edit profile — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Edit profile' };
 
 export default async function EditProfilePage() {
   const session = await auth();

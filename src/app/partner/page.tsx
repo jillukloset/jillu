@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'Partner Up — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'Partner Up',
+  description: 'Partner with Jillu Kloset — for boutiques, thrift stores, creators, and brands supporting circular fashion.',
+  alternates: { canonical: '/partner' },
+};
 
 export default function PartnerPage() {
   return (

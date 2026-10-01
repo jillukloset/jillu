@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { listBrands, listCategories, listVibes } from '@/modules/taxonomy/repository';
 import { SellWizard } from './sell-wizard';
 
-export const metadata: Metadata = { title: 'Sell something — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Sell something' };
 
 export default async function SellPage() {
   const session = await auth();

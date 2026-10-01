@@ -8,7 +8,7 @@ import { NotificationItem } from '@/components/notifications/notification-item';
 import { MarkAllReadButton } from '@/components/notifications/mark-all-read-button';
 import { EmptyState } from '@/components/ui/empty-state';
 
-export const metadata: Metadata = { title: 'Notifications — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Notifications' };
 
 export default async function NotificationsPage({
   searchParams,

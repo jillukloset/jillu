@@ -4,7 +4,7 @@ import { requireAdminPage } from '@/lib/require-role';
 import { listAuditLogs } from '@/modules/admin/audit';
 import { formatRelativeTime } from '@/lib/format-time';
 
-export const metadata: Metadata = { title: 'Admin · Audit log — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Audit log' };
 
 export default async function AdminAuditPage({
   searchParams,

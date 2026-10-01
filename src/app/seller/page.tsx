@@ -10,7 +10,7 @@ import { ListingRow } from '@/components/seller/listing-row';
 import { EmptyState } from '@/components/ui/empty-state';
 import { buttonClassName } from '@/components/ui/button';
 
-export const metadata: Metadata = { title: 'My closet — Jillu Kloset' };
+export const metadata: Metadata = { title: 'My closet' };
 
 const TABS = [
   { key: 'active', label: 'Active', statuses: ['ACTIVE', 'RESERVED'] },

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { MessageIcon } from '@/components/icons';
 
-export const metadata: Metadata = { title: 'Messages — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Messages' };
 
 export default function MessagesPage() {
   return (

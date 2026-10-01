@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { getUsersPage } from '@/modules/admin/users-service';
 import { UserRowActions } from '@/components/admin/user-row-actions';
 
-export const metadata: Metadata = { title: 'Admin · Users — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Users' };
 
 export default async function AdminUsersPage({
   searchParams,

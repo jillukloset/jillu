@@ -3,7 +3,7 @@ import { requireAdminPage } from '@/lib/require-role';
 import { db } from '@/lib/db';
 import { VibeManager } from '@/components/admin/vibe-manager';
 
-export const metadata: Metadata = { title: 'Admin · Vibes — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Vibes' };
 
 export default async function AdminVibesPage() {
   await requireAdminPage('/admin/vibes');

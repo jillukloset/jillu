@@ -5,7 +5,7 @@ import { listCategories } from '@/modules/taxonomy/repository';
 import { ListingRowActions } from '@/components/admin/listing-row-actions';
 import { Price } from '@/components/ui/price';
 
-export const metadata: Metadata = { title: 'Admin · Listings — Jillu Kloset' };
+export const metadata: Metadata = { title: 'Admin · Listings' };
 
 const STATUSES = ['DRAFT', 'ACTIVE', 'RESERVED', 'SOLD', 'ARCHIVED'];
 

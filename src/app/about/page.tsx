@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { PolicyPage } from '@/components/legal/policy-page';
 
-export const metadata: Metadata = { title: 'About Us — Jillu Kloset' };
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Jillu Kloset is a home for pre-loved fashion — learn about our mission to give clothes another story.',
+  alternates: { canonical: '/about' },
+};
 
 export default function AboutPage() {
   return (

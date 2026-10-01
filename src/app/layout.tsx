@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Fraunces, Inter } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { SiteHeader } from '@/components/nav/site-header';
+import { SiteFooter } from '@/components/nav/site-footer';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <SiteHeader />
           <main>{children}</main>
+          <SiteFooter />
         </Providers>
       </body>
     </html>

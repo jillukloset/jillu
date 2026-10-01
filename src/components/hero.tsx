@@ -29,7 +29,7 @@ export function Hero({ config }: { config: HeroConfigInput | null }) {
 
   return (
     <section
-      className="relative overflow-hidden px-gutter py-20 text-paper sm:py-28"
+      className="relative overflow-hidden px-gutter py-24 text-paper sm:py-32"
       style={{ backgroundColor: c.backgroundColor }}
     >
       {c.backgroundUrl ? (
@@ -43,16 +43,27 @@ export function Hero({ config }: { config: HeroConfigInput | null }) {
             }}
           />
         </>
-      ) : null}
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(120% 140% at 15% 0%, rgba(255,255,255,0.08), transparent 55%), radial-gradient(90% 120% at 100% 100%, rgba(0,0,0,0.25), transparent 60%)',
+          }}
+        />
+      )}
 
       <div
         className={clsx(
-          'relative mx-auto flex max-w-5xl flex-col gap-6',
+          'relative mx-auto flex max-w-5xl flex-col gap-7 motion-safe:animate-[fade-in-up_0.7s_ease-out]',
           centered ? 'items-center text-center' : 'items-start',
         )}
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-paper/70">{c.eyebrow}</p>
-        <h1 className="whitespace-pre-line font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-paper/70">
+          <span className="h-px w-8 bg-paper/40" aria-hidden />
+          {c.eyebrow}
+        </p>
+        <h1 className="whitespace-pre-line font-display text-5xl leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
           {c.title}
         </h1>
         <p className="max-w-md text-lg text-paper/80">{c.subtitle}</p>

@@ -10,22 +10,25 @@ const STEPS = [
 
 export function OpenClosetSection({ closetHref }: { closetHref: string }) {
   return (
-    <section className="px-gutter py-16">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex max-w-md flex-col items-start gap-8 text-left">
-          {STEPS.map((step) => (
-            <div key={step.label}>
-              <p className="font-display text-2xl tracking-tight text-ink sm:text-3xl">{step.label}</p>
-              <p className="mt-1 text-base text-muted">{step.description}</p>
+    <section className="bg-surface px-gutter py-20">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+        <div className="flex max-w-md flex-col items-start gap-9 text-left">
+          {STEPS.map((step, index) => (
+            <div key={step.label} className="flex gap-4">
+              <span className="font-display text-sm text-accent-text">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <p className="font-display text-2xl tracking-tight text-ink sm:text-3xl">{step.label}</p>
+                <p className="mt-1 max-w-xs text-base text-muted">{step.description}</p>
+              </div>
             </div>
           ))}
 
-          <Link href={closetHref} className={buttonClassName('primary', 'lg')}>
+          <Link href={closetHref} className={buttonClassName('primary', 'lg', 'ml-9')}>
             OPEN YOUR CLOSET
           </Link>
         </div>
 
-        <div className="relative aspect-[4/5] w-full max-w-sm shrink-0 overflow-hidden rounded-lg bg-surface">
+        <div className="relative aspect-[4/5] w-full max-w-sm shrink-0 overflow-hidden rounded-lg bg-paper shadow-raised">
           <Image
             src="/sell.png"
             alt="Open your closet"

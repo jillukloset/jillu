@@ -3,6 +3,7 @@ import { countListings, searchListings } from '@/modules/discovery/repository';
 import { listBrands, listCategories, findVibeBySlug } from '@/modules/taxonomy/repository';
 import { FilterToolbar } from '@/components/explore/filter-toolbar';
 import { DiscoveryResults } from '@/components/explore/discovery-results';
+import { BackButton } from '@/components/ui/back-button';
 import type { SortOption } from '@/modules/discovery/types';
 
 export const metadata: Metadata = {
@@ -65,6 +66,8 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="mx-auto max-w-6xl px-gutter py-8">
+      <BackButton fallbackHref="/" className="mb-5" />
+
       {currentVibe ? (
         <VibeHeader vibe={currentVibe} />
       ) : (

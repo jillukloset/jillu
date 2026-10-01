@@ -17,6 +17,7 @@ import { ConditionBadge } from '@/components/condition-badge';
 import { VibeTag } from '@/components/vibe-tag';
 import { Price } from '@/components/ui/price';
 import { isListingMessageable } from '@/modules/messaging/messageable';
+import { BackButton } from '@/components/ui/back-button';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -80,6 +81,8 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="mx-auto max-w-5xl px-gutter py-8">
+      <BackButton fallbackHref="/explore" className="mb-5" />
+
       {isOwner && !isPublic ? (
         <p className="mb-4 rounded-md bg-plum px-4 py-2 text-sm text-paper">
           This listing is {listing.status.toLowerCase()} and only visible to you.

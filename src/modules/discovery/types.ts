@@ -8,6 +8,7 @@ export type ExploreFilters = {
   size?: string;
   condition?: string;
   gender?: string;
+  color?: string;
   location?: string;
   minPrice?: number;
   maxPrice?: number;

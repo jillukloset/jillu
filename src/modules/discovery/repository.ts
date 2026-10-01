@@ -61,6 +61,7 @@ function buildWhere(filters: ExploreFilters): Prisma.ListingWhereInput {
   if (filters.size) where.size = filters.size;
   if (filters.condition) where.condition = filters.condition as never;
   if (filters.gender) where.gender = filters.gender as never;
+  if (filters.color) where.color = { contains: filters.color, mode: 'insensitive' };
   if (filters.location) where.location = { contains: filters.location, mode: 'insensitive' };
   if (filters.minPrice != null || filters.maxPrice != null) {
     where.price = {
@@ -100,4 +101,8 @@ export async function searchListings(filters: ExploreFilters, take = 24) {
 
   const hasMore = rows.length > take;
   return { items: rows.slice(0, take), hasMore };
+}
+
+export function countListings(filters: ExploreFilters) {
+  return db.listing.count({ where: buildWhere(filters) });
 }

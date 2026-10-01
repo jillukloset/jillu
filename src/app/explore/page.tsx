@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { searchListings } from '@/modules/discovery/repository';
+import { countListings, searchListings } from '@/modules/discovery/repository';
 import { listBrands, listCategories, findVibeBySlug } from '@/modules/taxonomy/repository';
-import { FilterDrawer } from '@/components/explore/filter-drawer';
+import { FilterToolbar } from '@/components/explore/filter-toolbar';
 import { DiscoveryResults } from '@/components/explore/discovery-results';
 import type { SortOption } from '@/modules/discovery/types';
 
@@ -15,6 +15,7 @@ type SearchParams = {
   size?: string;
   condition?: string;
   gender?: string;
+  color?: string;
   location?: string;
   minPrice?: string;
   maxPrice?: string;
@@ -33,6 +34,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     size: params.size,
     condition: params.condition,
     gender: params.gender,
+    color: params.color,
     location: params.location,
     minPrice: params.minPrice ? Number(params.minPrice) : undefined,
     maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
@@ -40,8 +42,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     cursor: params.cursor,
   };
 
-  const [{ items, hasMore }, categories, brands, currentVibe] = await Promise.all([
+  const [{ items, hasMore }, totalCount, categories, brands, currentVibe] = await Promise.all([
     searchListings(filters),
+    countListings(filters),
     listCategories(),
     listBrands(),
     params.vibe ? findVibeBySlug(params.vibe) : Promise.resolve(null),
@@ -62,9 +65,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         <h1 className="mb-6 font-display text-3xl">Explore</h1>
       )}
 
-      <FilterDrawer
+      <FilterToolbar
         categories={categories}
         brands={brands}
+        resultsCount={totalCount}
         current={{
           category: params.category,
           brand: params.brand,
@@ -72,6 +76,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           size: params.size,
           condition: params.condition,
           gender: params.gender,
+          color: params.color,
           location: params.location,
           minPrice: params.minPrice,
           maxPrice: params.maxPrice,

@@ -104,6 +104,19 @@ export function BellIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function SlidersIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 6h10M18 6h2" />
+      <circle cx="16" cy="6" r="2" />
+      <path d="M4 12h2M10 12h10" />
+      <circle cx="8" cy="12" r="2" />
+      <path d="M4 18h10M18 18h2" />
+      <circle cx="16" cy="18" r="2" />
+    </svg>
+  );
+}
+
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base(props)}>

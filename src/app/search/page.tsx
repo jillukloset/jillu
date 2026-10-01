@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { searchListings } from '@/modules/discovery/repository';
+import { countListings, searchListings } from '@/modules/discovery/repository';
 import { listBrands, listCategories } from '@/modules/taxonomy/repository';
-import { FilterDrawer } from '@/components/explore/filter-drawer';
+import { FilterToolbar } from '@/components/explore/filter-toolbar';
 import { DiscoveryResults } from '@/components/explore/discovery-results';
 import { SearchBar } from '@/components/nav/search-bar';
 import type { SortOption } from '@/modules/discovery/types';
@@ -22,6 +22,7 @@ type SearchParams = {
   size?: string;
   condition?: string;
   gender?: string;
+  color?: string;
   location?: string;
   minPrice?: string;
   maxPrice?: string;
@@ -39,6 +40,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     size: params.size,
     condition: params.condition,
     gender: params.gender,
+    color: params.color,
     location: params.location,
     minPrice: params.minPrice ? Number(params.minPrice) : undefined,
     maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
@@ -47,8 +49,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   };
 
   const hasQuery = Boolean(params.q);
-  const [{ items, hasMore }, categories, brands] = await Promise.all([
+  const [{ items, hasMore }, totalCount, categories, brands] = await Promise.all([
     hasQuery ? searchListings(filters) : Promise.resolve({ items: [], hasMore: false }),
+    hasQuery ? countListings(filters) : Promise.resolve(0),
     listCategories(),
     listBrands(),
   ]);
@@ -70,16 +73,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <>
           <h1 className="mb-6 font-display text-2xl">Results for &ldquo;{params.q}&rdquo;</h1>
 
-          <FilterDrawer
+          <FilterToolbar
             action="/search"
             categories={categories}
             brands={brands}
+            resultsCount={totalCount}
             current={{
               category: params.category,
               brand: params.brand,
               size: params.size,
               condition: params.condition,
               gender: params.gender,
+              color: params.color,
               location: params.location,
               minPrice: params.minPrice,
               maxPrice: params.maxPrice,

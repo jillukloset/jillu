@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import { CheckIcon } from '@/components/icons';
 
 export function MarkAllReadButton() {
   const router = useRouter();
@@ -29,8 +30,9 @@ export function MarkAllReadButton() {
         type="button"
         onClick={markAll}
         disabled={pending}
-        className="text-xs font-semibold text-muted underline hover:text-ink disabled:opacity-60"
+        className="inline-flex items-center gap-1.5 rounded-pill bg-plum px-4 py-2 text-xs font-semibold text-paper shadow-card transition-all duration-fast hover:-translate-y-px hover:shadow-raised disabled:opacity-60 disabled:hover:translate-y-0"
       >
+        <CheckIcon width={14} height={14} />
         Mark all as read
       </button>
       {error ? <p className="text-xs text-danger">{error}</p> : null}

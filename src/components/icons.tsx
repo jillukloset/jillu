@@ -160,3 +160,28 @@ export function SavedBagIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function CheckIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="m4.5 12.5 5 5L19.5 7" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="m9 5 7 7-7 7" />
+    </svg>
+  );
+}
+
+export function TagIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M3.5 3.5h7.6a2 2 0 0 1 1.4.6l7.5 7.5a2 2 0 0 1 0 2.8l-5.7 5.7a2 2 0 0 1-2.8 0L4 12.6a2 2 0 0 1-.6-1.4V3.5Z" />
+      <circle cx="8.3" cy="8.3" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}

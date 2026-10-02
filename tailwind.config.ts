@@ -26,6 +26,7 @@ const config: Config = {
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
         sans: ['var(--font-sans)', 'sans-serif'],
+        hand: ['var(--font-hand)', 'cursive'],
       },
       borderRadius: {
         sm: 'var(--radius-sm)',

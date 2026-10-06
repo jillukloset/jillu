@@ -50,11 +50,11 @@ function buildCsp() {
   const directives = [
     `default-src 'self'`,
     // Dev only: React Refresh / webpack HMR evaluate strings at runtime.
-    `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"}`,
+    `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"}`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: blob: ${storageOrigin} https://picsum.photos`,
     `font-src 'self' data:`,
-    `connect-src 'self' ${connectOrigins}`,
+    `connect-src 'self' ${connectOrigins} https://cloudflareinsights.com`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
